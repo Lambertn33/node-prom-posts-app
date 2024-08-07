@@ -6,7 +6,13 @@ import { AppError } from "../utils/error";
 
 export const SignupService = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email);
-  if (existingUser) throw new Error("user with such email exists");
+  if (existingUser) {
+    return {
+      type: "Error",
+      status: 400,
+      message: "user with such email exists",
+    };
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await createUser(email, hashedPassword);
@@ -15,17 +21,37 @@ export const SignupService = async (email: string, password: string) => {
     email: newUser.email,
   };
 
-  return { formattedUser };
+  return {
+    type: "Success",
+    status: 201,
+    message: "user created successfully",
+    user: formattedUser,
+  };
 };
 
 export const SigninService = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email);
-  if (!existingUser) throw new AppError("Invalid email or password", 401);
+  if (!existingUser) {
+    return {
+      type: "Error",
+      status: 400,
+      message: "Invalid email or password",
+    };
+  }
 
   const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-  if (!isPasswordValid) throw new AppError("Invalid email or password", 401);
-
+  if (!isPasswordValid) {
+    return {
+      type: "Error",
+      status: 400,
+      message: "Invalid email or password",
+    };
+  }
   const token = generateToken(existingUser.id, existingUser.email);
 
-  return { token };
+  return {
+    type: "Success",
+    status: 200,
+    token,
+  };
 };

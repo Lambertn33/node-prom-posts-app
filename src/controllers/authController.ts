@@ -1,33 +1,27 @@
 import { Request, Response } from "express";
 import { SigninService, SignupService } from "../services/authService";
-import { AppError } from "../utils/error";
 
 export const Signup = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const { message, status, type, user } = await SignupService(email, password);
   try {
-    const { email, password } = req.body;
-    const { formattedUser: user } = await SignupService(email, password);
-
-    return res.status(201).json({
-      message: "registration made successfully",
-      user,
-    });
+    return type === "Success"
+      ? res.status(status).json({ message, user })
+      : res.status(status).json({ message });
   } catch (error) {
-    if (error instanceof AppError) {
-      return res.status(error.statusCode).json({ message: error.message });
-    }
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
 export const Signin = async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const { status, type, message, token } = await SigninService(email, password);
+
   try {
-    const { email, password } = req.body;
-    const { token } = await SigninService(email, password);
-    return res.status(200).json(token);
+    return type === "Success"
+      ? res.status(status).json({ token })
+      : res.status(status).json({ message });
   } catch (error) {
-    if (error instanceof AppError) {
-      return res.status(error.statusCode).json({ message: error.message });
-    }
     return res.status(500).json({ message: "Internal server error" });
   }
 };
