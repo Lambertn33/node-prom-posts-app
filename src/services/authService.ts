@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-
 import { createUser, getUserByEmail } from "../repositories/userRepository";
 import { generateToken } from "../utils/jwt";
 
