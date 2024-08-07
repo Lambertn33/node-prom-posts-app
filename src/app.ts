@@ -12,6 +12,8 @@ import {
   updatePost,
 } from "./controllers/postController";
 
+import { makePostComment } from "./controllers/commentController";
+
 import { authMiddleware } from "./middlewares/authMiddleware";
 
 const app = express();
@@ -38,5 +40,7 @@ app.post("/posts", authMiddleware, createPost);
 app.get("/user/posts", authMiddleware, getUserPosts);
 
 app.put("/posts/:id", authMiddleware, updatePost);
+
+app.post("/posts/:id/comment", authMiddleware, makePostComment);
 
 export default app;

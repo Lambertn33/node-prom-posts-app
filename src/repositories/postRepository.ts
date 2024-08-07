@@ -78,7 +78,17 @@ export const getPost = (id: number): Promise<Post | null> => {
       id,
     },
     include: {
-      comments: true,
+      comments: {
+        select: {
+          content: true,
+          user: {
+            select: {
+              id: true,
+              email: true,
+            },
+          },
+        },
+      },
       user: {
         select: {
           id: true,
