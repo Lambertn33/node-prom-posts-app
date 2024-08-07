@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 
 import { createUser, getUserByEmail } from "../repositories/userRepository";
 import { generateToken } from "../utils/jwt";
-import { AppError } from "../utils/error";
 
 export const SignupService = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email);
@@ -38,8 +37,8 @@ export const SigninService = async (email: string, password: string) => {
       message: "Invalid email or password",
     };
   }
-
   const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+
   if (!isPasswordValid) {
     return {
       type: "Error",
