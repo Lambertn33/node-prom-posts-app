@@ -1,3 +1,4 @@
+import { responseStatuses, responseTypes } from "../constants/responses";
 import { makePostComment } from "../repositories/commentRepository";
 
 export const makePostCommentService = async (
@@ -7,8 +8,8 @@ export const makePostCommentService = async (
 ) => {
   const createdComment = await makePostComment(userId, postId, content);
   return {
-    type: "Success",
-    status: 200,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.CREATED,
     message: "comment successfully",
     createdComment,
   };

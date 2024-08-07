@@ -1,10 +1,10 @@
+import { responseStatuses, responseTypes } from "../constants/responses";
 import {
   createPost,
   getPost,
   getPosts,
   getUserPosts,
   updatePost,
-  checkPostUpdatePermission,
 } from "../repositories/postRepository";
 
 export const createPostService = async (
@@ -14,8 +14,8 @@ export const createPostService = async (
 ) => {
   const createdPost = await createPost(title, content, userId);
   return {
-    type: "Success",
-    status: 201,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.CREATED,
     message: "post created successfully",
     createdPost,
   };
@@ -28,8 +28,8 @@ export const updatePostService = async (
 ) => {
   const updatedPost = await updatePost(postId, title, content);
   return {
-    type: "Success",
-    status: 200,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.SUCCESS,
     message: "post updated successfully",
     updatedPost,
   };
@@ -38,8 +38,8 @@ export const updatePostService = async (
 export const getPostsService = async () => {
   const posts = await getPosts();
   return {
-    type: "Success",
-    status: 200,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.SUCCESS,
     posts,
   };
 };
@@ -48,13 +48,13 @@ export const getPostService = async (postId: number) => {
   const post = await getPost(postId);
   return post
     ? {
-        type: "Success",
-        status: 200,
+        type: responseTypes.SUCCESS,
+        status: responseStatuses.SUCCESS,
         post,
       }
     : {
-        type: "Success",
-        status: 404,
+        type: responseTypes.SUCCESS,
+        status: responseStatuses.USER_ERROR,
         message: "Post not found",
       };
 };
@@ -62,8 +62,8 @@ export const getPostService = async (postId: number) => {
 export const getUserPostsService = async (userId: number) => {
   const posts = await getUserPosts(userId);
   return {
-    type: "Success",
-    status: 200,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.SUCCESS,
     posts,
   };
 };

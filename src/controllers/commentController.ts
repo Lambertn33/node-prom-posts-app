@@ -6,8 +6,11 @@ export const makePostComment = async (req: Request, res: Response) => {
   const { comment } = req.body;
   const user = req.user;
 
-  const { createdComment, message, status, type } =
-    await makePostCommentService(parseInt(user?.id!), parseInt(id), comment);
+  const { createdComment, message, status } = await makePostCommentService(
+    parseInt(user?.id!),
+    parseInt(id),
+    comment
+  );
 
   return res.status(status).json({
     message,

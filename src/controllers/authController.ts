@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import { SigninService, SignupService } from "../services/authService";
+import { responseTypes } from "../constants/responses";
 
 export const Signup = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const { message, status, type, user } = await SignupService(email, password);
   try {
-    return type === "Success"
+    return type === responseTypes.SUCCESS
       ? res.status(status).json({ message, user })
       : res.status(status).json({ message });
   } catch (error) {
@@ -18,7 +19,7 @@ export const Signin = async (req: Request, res: Response) => {
   const { status, type, message, token } = await SigninService(email, password);
 
   try {
-    return type === "Success"
+    return type === responseTypes.SUCCESS
       ? res.status(status).json({ token })
       : res.status(status).json({ message });
   } catch (error) {

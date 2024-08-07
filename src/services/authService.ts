@@ -1,13 +1,14 @@
 import bcrypt from "bcryptjs";
 import { createUser, getUserByEmail } from "../repositories/userRepository";
 import { generateToken } from "../utils/jwt";
+import { responseStatuses, responseTypes } from "../constants/responses";
 
 export const SignupService = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return {
-      type: "Error",
-      status: 400,
+      type: responseTypes.ERROR,
+      status: responseStatuses.USER_ERROR,
       message: "user with such email exists",
     };
   }
@@ -20,8 +21,8 @@ export const SignupService = async (email: string, password: string) => {
   };
 
   return {
-    type: "Success",
-    status: 201,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.CREATED,
     message: "user created successfully",
     user: formattedUser,
   };
@@ -31,8 +32,8 @@ export const SigninService = async (email: string, password: string) => {
   const existingUser = await getUserByEmail(email);
   if (!existingUser) {
     return {
-      type: "Error",
-      status: 400,
+      type: responseTypes.ERROR,
+      status: responseStatuses.USER_ERROR,
       message: "Invalid email or password",
     };
   }
@@ -40,16 +41,16 @@ export const SigninService = async (email: string, password: string) => {
 
   if (!isPasswordValid) {
     return {
-      type: "Error",
-      status: 400,
+      type: responseTypes.ERROR,
+      status: responseStatuses.USER_ERROR,
       message: "Invalid email or password",
     };
   }
   const token = generateToken(existingUser.id, existingUser.email);
 
   return {
-    type: "Success",
-    status: 200,
+    type: responseTypes.SUCCESS,
+    status: responseStatuses.SUCCESS,
     token,
   };
 };

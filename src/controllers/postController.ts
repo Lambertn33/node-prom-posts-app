@@ -7,6 +7,7 @@ import {
   updatePostService,
 } from "../services/postService";
 import { checkPostUpdatePermission } from "../repositories/postRepository";
+import { responseStatuses, responseTypes } from "../constants/responses";
 
 export const createPost = async (req: Request, res: Response) => {
   const { title, content } = req.body;
@@ -30,7 +31,9 @@ export const updatePost = async (req: Request, res: Response) => {
 
   const user = req.user;
   if (!(await checkPostUpdatePermission(parseInt(id), parseInt(user?.id!)))) {
-    return res.status(403).json({ message: "You can only edit your posts" });
+    return res
+      .status(responseStatuses.FORBIDDEN)
+      .json({ message: "You can only edit your posts" });
   }
 
   const { message, status, updatedPost } = await updatePostService(
@@ -56,7 +59,7 @@ export const getPost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status, type, message, post } = await getPostService(parseInt(id));
 
-  return type === "Success"
+  return type === responseTypes.SUCCESS
     ? res.status(status).json({
         post,
       })

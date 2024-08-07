@@ -1,3 +1,4 @@
+import { responseStatuses } from "../constants/responses";
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
@@ -19,7 +20,9 @@ export const authMiddleware = async (
   const token = tokenHeader.split(" ")[1];
   const decodedToken = jwt.verify(token, secretKey) as any;
   if (!decodedToken)
-    return res.status(401).json({ message: "invalid or expired token" });
+    return res
+      .status(responseStatuses.UNAUTHENTICATED)
+      .json({ message: "invalid or expired token" });
 
   const { id, email } = decodedToken;
   req.user = { id, email };
