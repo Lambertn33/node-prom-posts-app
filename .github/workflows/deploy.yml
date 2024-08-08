@@ -23,10 +23,18 @@ jobs:
           path: dist
 
   deploy:
+    runs-on: self-hosted
     needs: build
-    runs-on: ubuntu-latest
     steps:
+      - name: install node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
       - name: download the artifacts
         uses: actions/download-artifact@v3
         with:
           name: dist-files
+      - name: create .env
+        run: |
+          touch .env
+          echo "${{secrets.PROD_ENV}}" > .env
