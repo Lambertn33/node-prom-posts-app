@@ -33,6 +33,8 @@ app.get("/posts", getPosts);
 
 app.get("/posts/:id", getPost);
 
+// requires auth
+
 app.use(authMiddleware);
 
 app.post("/posts", authMiddleware, createPost);
