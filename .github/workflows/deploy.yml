@@ -1,0 +1,32 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get the codes
+        uses: actions/checkout@v4
+      - name: install dependencies
+        run: npm install
+      - name: test the project
+        run: npm test
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: produce the artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: download the artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
