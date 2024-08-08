@@ -15,6 +15,7 @@ jobs:
 
       - name: build the project
         run: tsc --build
+
       - name: Copy Prisma folder
         run: cp -R prisma dist/prisma
 
@@ -32,10 +33,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+
       - name: download the artifacts
         uses: actions/download-artifact@v3
         with:
           name: dist-files
+
+      - name: copy package.json
+        run: cp ../package.json .
+
       - name: create .env
         run: |
           touch .env
