@@ -14,12 +14,10 @@ jobs:
         run: npm install
 
       - name: start the server
-        run: npm run start-dev &
-        env:
-          NODE_ENV: test
-
-      - name: wait for the server to be ready
-        run: npx wait-on http://localhost:5000
+        uses: ./
+        with:
+          start: npm run start-dev
+          wait-on: http://localhost:5000
 
       - name: test the project
         run: npm test
