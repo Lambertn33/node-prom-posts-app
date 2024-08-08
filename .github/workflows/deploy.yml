@@ -3,10 +3,8 @@ on:
   push:
     branches:
       - main
-env:
-  DATABASE_URL: "postgresql://postgres:lambert@localhost:5432/posts-test-app?schema=public"
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: get the codes
@@ -15,10 +13,6 @@ jobs:
       - name: install dependencies
         run: npm install
 
-  build:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
       - name: build the project
         run: tsc --build
 
