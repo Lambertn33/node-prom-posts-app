@@ -46,3 +46,9 @@ jobs:
         run: |
           touch .env
           echo "${{secrets.PROD_ENV}}" > .env
+
+      - name: install the dependencies
+        run: npm install
+
+      - name: restart pm2
+        run: pm2 restart Server

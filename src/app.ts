@@ -26,7 +26,7 @@ app.use(express.json());
 //default
 
 app.get("/", (_: Request, res: Response) => {
-  res.status(responseStatuses.SUCCESS).json({ message: "Welcome" });
+  res.status(responseStatuses.SUCCESS).json({ message: "Welcome to this app" });
 });
 
 // authentication
