@@ -15,6 +15,8 @@ jobs:
 
       - name: build the project
         run: tsc --build
+      - name: Copy Prisma folder
+        run: cp -R prisma dist/prisma
 
       - name: produce the artifacts
         uses: actions/upload-artifact@v3
