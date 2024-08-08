@@ -47,10 +47,15 @@ export const SigninService = async (email: string, password: string) => {
     };
   }
   const token = generateToken(existingUser.id, existingUser.email);
+  const user = {
+    id: existingUser.id,
+    email: existingUser.email,
+  };
 
   return {
     type: responseTypes.SUCCESS,
     status: responseStatuses.SUCCESS,
     token,
+    user,
   };
 };

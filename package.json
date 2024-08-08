@@ -5,7 +5,7 @@
   "scripts": {
     "start-dev": "nodemon",
     "start-prod": "node dist/server.js",
-    "test": "npx env-cmd -f .env.test cypress run"
+    "test": "npx cypress run"
   },
   "keywords": [],
   "author": "",

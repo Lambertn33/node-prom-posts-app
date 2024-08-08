@@ -16,11 +16,14 @@ export const Signup = async (req: Request, res: Response) => {
 
 export const Signin = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const { status, type, message, token } = await SigninService(email, password);
+  const { status, type, message, token, user } = await SigninService(
+    email,
+    password
+  );
 
   try {
     return type === responseTypes.SUCCESS
-      ? res.status(status).json({ token })
+      ? res.status(status).json({ token, user })
       : res.status(status).json({ message });
   } catch (error) {
     return res.status(500).json({ message: "Internal server error" });
