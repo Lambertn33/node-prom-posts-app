@@ -9,21 +9,34 @@ jobs:
     steps:
       - name: get the codes
         uses: actions/checkout@v4
+
       - name: install dependencies
         run: npm install
+
+      - name: start the server
+        run: npm run start &
+        env:
+          NODE_ENV: test
+
+      - name: wait for the server to be ready
+        run: npx wait-on http://localhost:5000
+
       - name: test the project
         run: npm test
+
   build:
     runs-on: ubuntu-latest
     needs: test
     steps:
       - name: build the project
         run: tsc --build
+
       - name: produce the artifacts
         uses: actions/upload-artifact@v3
         with:
           name: dist-files
           path: dist
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
