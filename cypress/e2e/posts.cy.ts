@@ -9,7 +9,7 @@ describe("Post Management Tests", () => {
     });
   });
 
-  it("should create a new post, add it to posts, view it and update it", () => {
+  it("should create a new post, add it to posts, view it, update it and comment on it", () => {
     cy.get("@authData").then((data: any) => {
       const authToken = data.authToken;
 
@@ -58,6 +58,7 @@ describe("Post Management Tests", () => {
             createdPost.title
           );
           // Add more assertions for other properties if needed
+          cy.wrap(response.body.post).as("viewedPost");
         });
 
         //update the created post
@@ -85,6 +86,44 @@ describe("Post Management Tests", () => {
               "title",
               "Post 1 edited"
             );
+          });
+        });
+
+        // make a comment on created post
+        cy.get("@viewedPost").then((viewedPost: any) => {
+          // make a comment
+          cy.request({
+            method: "POST",
+            url: `/posts/${viewedPost.id}/comment`,
+            headers: { Authorization: `Bearer ${authToken}` },
+            body: {
+              comment: "comment 1",
+            },
+          }).then((response) => {
+            expect(response.status).to.eq(201);
+            expect(response.body).to.have.property("createdComment");
+            expect(response.body.createdComment).to.have.property(
+              "content",
+              "comment 1"
+            );
+            cy.wrap(response.body.createdComment).as("createdComment");
+          });
+
+          // view created comment among the post comments
+          cy.request({
+            url: `/posts/${viewedPost.id}`,
+            method: "GET",
+          }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body).to.have.property("post");
+
+            cy.get("@createdComment").then((comment: any) => {
+              const postComments = response.body.post.comments;
+              const commentExists = postComments.some(
+                (postComment: any) => postComment.id === comment.id
+              );
+              expect(commentExists).to.be.true;
+            });
           });
         });
       });

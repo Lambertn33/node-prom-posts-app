@@ -81,6 +81,7 @@ export const getPost = (id: number): Promise<Post | null> => {
       comments: {
         select: {
           content: true,
+          id: true,
           user: {
             select: {
               id: true,

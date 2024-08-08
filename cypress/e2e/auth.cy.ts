@@ -14,6 +14,15 @@ describe("Authentication tests", () => {
         "testuser@gmail.com"
       );
     });
+
+    cy.signup("testuser2@gmail.com", "testuser").then((response) => {
+      expect(response.status).to.eq(201);
+      expect(response.body).to.have.property("user");
+      expect(response.body.user).to.have.property(
+        "email",
+        "testuser2@gmail.com"
+      );
+    });
   });
 
   it("should give an error if the user already exists", () => {
