@@ -40,7 +40,7 @@ jobs:
           name: dist-files
 
       - name: copy package.json
-        run: cp ../package.json .
+        run: cp ./package.json .
 
       - name: create .env
         run: |
