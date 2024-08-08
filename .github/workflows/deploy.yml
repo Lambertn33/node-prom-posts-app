@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+env:
+  DATABASE_URL: "postgresql://postgres:lambert@localhost:5432/posts-test-app?schema=public"
 jobs:
   test:
     runs-on: ubuntu-latest
