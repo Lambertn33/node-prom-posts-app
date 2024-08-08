@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 
 import { Signin, Signup } from "./controllers/authController";
 
+import { getMetrics, metricsMiddleware } from "./metrics";
+
 import {
   createPost,
   getPost,
@@ -15,9 +17,12 @@ import {
 import { makePostComment } from "./controllers/commentController";
 
 import { authMiddleware } from "./middlewares/authMiddleware";
+
 import { responseStatuses } from "./constants/responses";
 
 const app = express();
+
+app.use(metricsMiddleware);
 
 app.use(bodyParser.json());
 
@@ -28,6 +33,8 @@ app.use(express.json());
 app.get("/", (_: Request, res: Response) => {
   res.status(responseStatuses.SUCCESS).json({ message: "Welcome to this app" });
 });
+
+app.get("/metrics", getMetrics);
 
 // authentication
 app.post("/signup", Signup);

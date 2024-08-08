@@ -8,16 +8,24 @@ import {
 } from "../services/postService";
 import { checkPostUpdatePermission } from "../repositories/postRepository";
 import { responseStatuses, responseTypes } from "../constants/responses";
+import { httpRequestDurationMicroseconds } from "../metrics";
 
 export const createPost = async (req: Request, res: Response) => {
   const { title, content } = req.body;
   const user = req.user;
+  const end = httpRequestDurationMicroseconds.startTimer();
 
   const { createdPost, message, status } = await createPostService(
     title,
     content,
     parseInt(user?.id!)
   );
+
+  end({
+    route: req.route.path,
+    status_code: res.statusCode,
+    method: req.method,
+  });
 
   return res.status(status).json({
     message,
@@ -29,8 +37,14 @@ export const updatePost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, content } = req.body;
 
+  const end = httpRequestDurationMicroseconds.startTimer();
   const user = req.user;
   if (!(await checkPostUpdatePermission(parseInt(id), parseInt(user?.id!)))) {
+    end({
+      route: req.route.path,
+      status_code: res.statusCode,
+      method: req.method,
+    });
     return res
       .status(responseStatuses.FORBIDDEN)
       .json({ message: "You can only edit your posts" });
@@ -42,14 +56,27 @@ export const updatePost = async (req: Request, res: Response) => {
     parseInt(id)
   );
 
+  end({
+    route: req.route.path,
+    status_code: res.statusCode,
+    method: req.method,
+  });
   return res.status(status).json({
     message,
     updatedPost,
   });
 };
 
-export const getPosts = async (_: Request, res: Response) => {
+export const getPosts = async (req: Request, res: Response) => {
   const { posts, status } = await getPostsService();
+  const end = httpRequestDurationMicroseconds.startTimer();
+
+  end({
+    route: req.route.path,
+    status_code: res.statusCode,
+    method: req.method,
+  });
+
   return res.status(status).json({
     posts,
   });
@@ -58,6 +85,13 @@ export const getPosts = async (_: Request, res: Response) => {
 export const getPost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status, type, message, post } = await getPostService(parseInt(id));
+  const end = httpRequestDurationMicroseconds.startTimer();
+
+  end({
+    route: req.route.path,
+    status_code: res.statusCode,
+    method: req.method,
+  });
 
   return type === responseTypes.SUCCESS
     ? res.status(status).json({
@@ -70,7 +104,14 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const getUserPosts = async (req: Request, res: Response) => {
   const user = req.user;
+  const end = httpRequestDurationMicroseconds.startTimer();
   const { posts, status } = await getUserPostsService(parseInt(user?.id!));
+
+  end({
+    route: req.route.path,
+    status_code: res.statusCode,
+    method: req.method,
+  });
   return res.status(status).json({
     posts,
   });
