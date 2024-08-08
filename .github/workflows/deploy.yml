@@ -13,11 +13,11 @@ jobs:
       - name: install dependencies
         run: npm install
 
-      - name: start the server
-        uses: ./
+      - name: Run integration tests
+        uses: cypress-io/github-action@v5
         with:
           start: npm run start-dev
-          wait-on: http://localhost:5000
+          wait-on: http://[::1]:5000
 
       - name: test the project
         run: npm test
