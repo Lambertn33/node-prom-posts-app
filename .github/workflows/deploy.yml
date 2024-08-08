@@ -17,7 +17,7 @@ jobs:
         run: |
           npm ci
           npm run build --if-present
-          npm start-dev
+          npm run start-dev
           npx wait-on http://127.0.0.1:5000
 
       - name: test the project
