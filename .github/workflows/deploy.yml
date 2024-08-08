@@ -14,7 +14,7 @@ jobs:
         run: npm install
 
       - name: start the server
-        run: npm run start &
+        run: npm run start-dev &
         env:
           NODE_ENV: test
 
