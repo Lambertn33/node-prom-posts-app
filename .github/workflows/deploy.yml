@@ -19,6 +19,9 @@ jobs:
       - name: Copy Prisma folder
         run: cp -R prisma dist/prisma
 
+      - name: copy package.json
+        run: cp package.json dist/
+
       - name: produce the artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -38,9 +41,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist-files
-
-      - name: copy package.json
-        run: cp ./package.json .
 
       - name: create .env
         run: |
