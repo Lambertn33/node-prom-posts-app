@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 
 import bodyParser from "body-parser";
 
@@ -15,12 +15,19 @@ import {
 import { makePostComment } from "./controllers/commentController";
 
 import { authMiddleware } from "./middlewares/authMiddleware";
+import { responseStatuses } from "./constants/responses";
 
 const app = express();
 
 app.use(bodyParser.json());
 
 app.use(express.json());
+
+//default
+
+app.get("/", (_: Request, res: Response) => {
+  res.status(responseStatuses.SUCCESS).json({ message: "Welcome" });
+});
 
 // authentication
 app.post("/signup", Signup);
