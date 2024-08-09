@@ -1,11 +1,16 @@
 import { Request, Response } from "express";
 import { SigninService, SignupService } from "../services/authService";
 import { responseStatuses, responseTypes } from "../constants/responses";
-import { httpRequestDurationMicroseconds, dbQueryDuration } from "../metrics";
+import {
+  httpRequestDurationMicroseconds,
+  dbQueryDuration,
+  dbQueriesTotal,
+} from "../metrics";
 
 export const Signup = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const { message, status, type, user } = await SignupService(email, password);
+  dbQueriesTotal.inc({ query_type: "signup" });
 
   const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
   const endDbQueryDuration = dbQueryDuration.startTimer();
@@ -47,6 +52,7 @@ export const Signin = async (req: Request, res: Response) => {
     email,
     password
   );
+  dbQueriesTotal.inc({ query_type: "signin" });
 
   try {
     endHttpRequestDuration({

@@ -9,7 +9,11 @@ import {
 } from "../services/postService";
 import { checkPostUpdatePermission } from "../repositories/postRepository";
 import { responseStatuses, responseTypes } from "../constants/responses";
-import { httpRequestDurationMicroseconds, dbQueryDuration } from "../metrics";
+import {
+  httpRequestDurationMicroseconds,
+  dbQueryDuration,
+  dbQueriesTotal,
+} from "../metrics";
 
 export const createPost = async (req: Request, res: Response) => {
   const { title, content } = req.body;
@@ -22,6 +26,7 @@ export const createPost = async (req: Request, res: Response) => {
     content,
     parseInt(user?.id!)
   );
+  dbQueriesTotal.inc({ query_type: "create_post" });
 
   endHttpRequestDuration({
     route: req.route.path,
@@ -51,6 +56,7 @@ export const updatePost = async (req: Request, res: Response) => {
       status_code: res.statusCode,
       method: req.method,
     });
+    dbQueriesTotal.inc({ query_type: "update_post" });
     endbQueryDuration({ query_type: "update_post" });
     return res
       .status(responseStatuses.FORBIDDEN)
@@ -62,6 +68,8 @@ export const updatePost = async (req: Request, res: Response) => {
     content,
     parseInt(id)
   );
+
+  dbQueriesTotal.inc({ query_type: "update_post" });
 
   endHttpRequestDuration({
     route: req.route.path,
@@ -79,6 +87,7 @@ export const getPosts = async (req: Request, res: Response) => {
   const { posts, status } = await getPostsService();
   const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
   const endbQueryDuration = dbQueryDuration.startTimer();
+  dbQueriesTotal.inc({ query_type: "get_posts" });
 
   endHttpRequestDuration({
     route: req.route.path,
@@ -97,6 +106,7 @@ export const getPost = async (req: Request, res: Response) => {
   const { status, type, message, post } = await getPostService(parseInt(id));
   const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
   const endbQueryDuration = dbQueryDuration.startTimer();
+  dbQueriesTotal.inc({ query_type: "get_post" });
 
   endHttpRequestDuration({
     route: req.route.path,
@@ -119,6 +129,7 @@ export const getUserPosts = async (req: Request, res: Response) => {
   const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
   const endbQueryDuration = dbQueryDuration.startTimer();
   const { posts, status } = await getUserPostsService(parseInt(user?.id!));
+  dbQueriesTotal.inc({ query_type: "get_user_posts" });
 
   endHttpRequestDuration({
     route: req.route.path,
@@ -141,6 +152,7 @@ export const searchPosts = async (req: Request, res: Response) => {
     searchKey
   );
 
+  dbQueriesTotal.inc({ query_type: "search_posts" });
   endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,

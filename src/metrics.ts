@@ -26,6 +26,12 @@ export const dbQueryDuration = new client.Histogram({
   buckets: [0.1, 5, 15, 50, 100, 500],
 });
 
+export const dbQueriesTotal = new client.Counter({
+  name: "db_queries_total",
+  help: "Total number of database queries",
+  labelNames: ["query_type"],
+});
+
 export const metricsMiddleware = (req: Request, res: Response, next: any) => {
   const end = httpRequestDurationMicroseconds.startTimer();
   res.on("finish", () => {

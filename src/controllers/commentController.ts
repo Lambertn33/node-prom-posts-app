@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { makePostCommentService } from "../services/commentService";
-import { httpRequestDurationMicroseconds, dbQueryDuration } from "../metrics";
+import {
+  httpRequestDurationMicroseconds,
+  dbQueryDuration,
+  dbQueriesTotal,
+} from "../metrics";
 import { responseStatuses } from "../constants/responses";
 
 export const makePostComment = async (req: Request, res: Response) => {
@@ -18,6 +22,7 @@ export const makePostComment = async (req: Request, res: Response) => {
       comment
     );
 
+    dbQueriesTotal.inc({ query_type: "make_comment" });
     endHttpRequestDuration({
       route: req.route.path,
       status_code: res.statusCode,
