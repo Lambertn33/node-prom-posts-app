@@ -1,0 +1,146 @@
+# My Project
+
+## Overview
+
+My Project is a web application that allows users to manage posts. It provides functionalities for creating, viewing, updating posts. and make comment on a post This API also includes metrics monitoring with Prometheus and Grafana for performance tracking.
+
+## API Documentation
+
+### Base URL
+
+The base URL for all API requests is: http://44.204.31.40:5000
+
+The url for grafana monitoring is: http://44.204.31.40:3000/public-dashboards/684fd7b7cb4f42298330c57174330bf6?orgId=1
+
+the
+
+### Authentication
+
+Authentication is required for most endpoints. Use the `Authorization` header with a Bearer token obtained during the login process.
+
+### Endpoints
+
+### Authentication
+
+#### POST /signup
+
+- **Description**: Signup in the system
+
+- Body:
+  {
+  "email": "string",
+  "password": "string"
+  }
+
+- **Responses**:
+  - `201 OK`: Successful signup.
+  - `400`: If email used already exists
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+#### POST /signin
+
+- **Description**: Signin in the system
+
+- Body:
+  {
+  "email": "string",
+  "password": "string"
+  }
+
+- **Responses**:
+  - `200 OK`: Successful signin and receive the auth bearer token.
+  - `400`: If creadentials are note correct
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+# #POSTS
+
+#### GET /posts
+
+- **Description**: Retrieve a list of posts.
+
+- **Responses**:
+  - `200 OK`: Returns a list of posts.
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+#### GET /posts/:id
+
+- **Description**: Retrieve a specific post.
+
+- **Responses**:
+  - `200 OK`: Returns a single post.
+  - `400`: Returns message if post not found
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+#### POST /posts/search
+
+- **Description**: Search a post
+
+- Body:
+  {
+  "searchKey": "string"
+  }
+
+- **Responses**:
+  - `200 OK`: Successful updated a post.
+  - `400`: User try to update a post which does not belong to him/her
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+## Private Routes
+
+#### POST /posts
+
+- **Description**: User creates a new post
+
+- Authorization: The received token on login
+
+- Body:
+  {
+  "title": "string",
+  "content": "string"
+  }
+
+- **Responses**:
+  - `200 OK`: Successful created a post.
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+#### PUT /posts/:id
+
+- **Description**: User updates a new post
+
+- Authorization: The received token on login
+
+- Body:
+  {
+  "title": "string",
+  "content": "string"
+  }
+
+- **Responses**:
+  - `200 OK`: Successful updated a post.
+  - `400`: User try to update a post which does not belong to him/her
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+#### PUT /posts/:id/comment
+
+- **Description**: User makes a comment on a particular post
+
+- Authorization: The received token on login
+
+- Body:
+  {
+  "comment": "string"
+  }
+
+- **Responses**:
+  - `200 OK`: Successful makes a comment.
+  - `500 Internal Server Error`: If something goes wrong on the server.
+
+#### GET /user/posts/
+
+- **Description**: User gets his created posts
+
+- Authorization: The received token on login
+
+- **Responses**:
+  - `200 OK`: Successful get the user posts.
+  - `500 Internal Server Error`: If something goes wrong on the server.
