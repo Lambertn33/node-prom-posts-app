@@ -4,6 +4,7 @@ import {
   getPostService,
   getPostsService,
   getUserPostsService,
+  searchPostService,
   updatePostService,
 } from "../services/postService";
 import { checkPostUpdatePermission } from "../repositories/postRepository";
@@ -115,4 +116,27 @@ export const getUserPosts = async (req: Request, res: Response) => {
   return res.status(status).json({
     posts,
   });
+};
+
+export const searchPosts = async (req: Request, res: Response) => {
+  const end = httpRequestDurationMicroseconds.startTimer();
+  const { searchKey } = req.body;
+
+  const { status, type, message, searchedPosts } = await searchPostService(
+    searchKey
+  );
+
+  end({
+    route: req.route.path,
+    status_code: res.statusCode,
+    method: req.method,
+  });
+
+  return type === responseTypes.SUCCESS
+    ? res.status(status).json({
+        searchedPosts,
+      })
+    : res.status(status).json({
+        message,
+      });
 };

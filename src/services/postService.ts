@@ -4,6 +4,7 @@ import {
   getPost,
   getPosts,
   getUserPosts,
+  searchPost,
   updatePost,
 } from "../repositories/postRepository";
 
@@ -56,6 +57,21 @@ export const getPostService = async (postId: number) => {
         type: responseTypes.SUCCESS,
         status: responseStatuses.USER_ERROR,
         message: "Post not found",
+      };
+};
+
+export const searchPostService = async (searchKey: string) => {
+  const searchedPosts = await searchPost(searchKey);
+  return searchPost.length > 0
+    ? {
+        type: responseTypes.SUCCESS,
+        status: responseStatuses.SUCCESS,
+        searchedPosts,
+      }
+    : {
+        type: responseTypes.SUCCESS,
+        status: responseStatuses.USER_ERROR,
+        message: "Your search did not match any post",
       };
 };
 

@@ -100,7 +100,51 @@ export const getPost = (id: number): Promise<Post | null> => {
   });
 };
 
-export const checkPostUpdatePermission = async (id: number, userId: number) => {
+export const searchPost = async (searchKey: string): Promise<Post[] | null> => {
+  return prisma.post.findMany({
+    where: {
+      OR: [
+        {
+          title: {
+            contains: searchKey,
+            mode: "insensitive",
+          },
+        },
+        {
+          content: {
+            contains: searchKey,
+            mode: "insensitive",
+          },
+        },
+      ],
+    },
+    include: {
+      comments: {
+        select: {
+          content: true,
+          id: true,
+          user: {
+            select: {
+              id: true,
+              email: true,
+            },
+          },
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          email: true,
+        },
+      },
+    },
+  });
+};
+
+export const checkPostUpdatePermission = async (
+  id: number,
+  userId: number
+): Promise<boolean> => {
   const post = await getPost(id);
   return post?.userId === userId;
 };

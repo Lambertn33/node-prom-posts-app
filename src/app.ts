@@ -11,6 +11,7 @@ import {
   getPost,
   getPosts,
   getUserPosts,
+  searchPosts,
   updatePost,
 } from "./controllers/postController";
 
@@ -46,6 +47,8 @@ app.post("/signin", Signin);
 app.get("/posts", getPosts);
 
 app.get("/posts/:id", getPost);
+
+app.post("/posts/search", searchPosts);
 
 // requires auth
 
