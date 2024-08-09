@@ -12,6 +12,20 @@ export const httpRequestDurationMicroseconds = new client.Histogram({
   buckets: [1, 5, 10],
 });
 
+export const requestCount = new client.Counter({
+  name: "http_requests_total",
+  help: "Total number of HTTP requests",
+  labelNames: ["method", "route", "status_code"],
+});
+
+// Database Query Duration
+export const dbQueryDuration = new client.Histogram({
+  name: "db_query_duration_ms",
+  help: "Duration of database queries in ms",
+  labelNames: ["query_type"],
+  buckets: [0.1, 5, 15, 50, 100, 500],
+});
+
 export const metricsMiddleware = (req: Request, res: Response, next: any) => {
   const end = httpRequestDurationMicroseconds.startTimer();
   res.on("finish", () => {
@@ -20,6 +34,11 @@ export const metricsMiddleware = (req: Request, res: Response, next: any) => {
       route: req.route ? req.route.path : req.originalUrl,
       status_code: res.statusCode,
     });
+  });
+  requestCount.inc({
+    method: req.method,
+    route: req.route ? req.route.path : req.originalUrl,
+    status_code: res.statusCode,
   });
   next();
 };

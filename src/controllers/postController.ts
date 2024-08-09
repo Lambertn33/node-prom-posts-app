@@ -9,12 +9,13 @@ import {
 } from "../services/postService";
 import { checkPostUpdatePermission } from "../repositories/postRepository";
 import { responseStatuses, responseTypes } from "../constants/responses";
-import { httpRequestDurationMicroseconds } from "../metrics";
+import { httpRequestDurationMicroseconds, dbQueryDuration } from "../metrics";
 
 export const createPost = async (req: Request, res: Response) => {
   const { title, content } = req.body;
   const user = req.user;
-  const end = httpRequestDurationMicroseconds.startTimer();
+  const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
+  const endbQueryDuration = dbQueryDuration.startTimer();
 
   const { createdPost, message, status } = await createPostService(
     title,
@@ -22,11 +23,13 @@ export const createPost = async (req: Request, res: Response) => {
     parseInt(user?.id!)
   );
 
-  end({
+  endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,
     method: req.method,
   });
+
+  endbQueryDuration({ query_type: "create_post" });
 
   return res.status(status).json({
     message,
@@ -38,14 +41,17 @@ export const updatePost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, content } = req.body;
 
-  const end = httpRequestDurationMicroseconds.startTimer();
+  const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
+  const endbQueryDuration = dbQueryDuration.startTimer();
+
   const user = req.user;
   if (!(await checkPostUpdatePermission(parseInt(id), parseInt(user?.id!)))) {
-    end({
+    endHttpRequestDuration({
       route: req.route.path,
       status_code: res.statusCode,
       method: req.method,
     });
+    endbQueryDuration({ query_type: "update_post" });
     return res
       .status(responseStatuses.FORBIDDEN)
       .json({ message: "You can only edit your posts" });
@@ -57,11 +63,12 @@ export const updatePost = async (req: Request, res: Response) => {
     parseInt(id)
   );
 
-  end({
+  endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,
     method: req.method,
   });
+  endbQueryDuration({ query_type: "update_post" });
   return res.status(status).json({
     message,
     updatedPost,
@@ -70,14 +77,16 @@ export const updatePost = async (req: Request, res: Response) => {
 
 export const getPosts = async (req: Request, res: Response) => {
   const { posts, status } = await getPostsService();
-  const end = httpRequestDurationMicroseconds.startTimer();
+  const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
+  const endbQueryDuration = dbQueryDuration.startTimer();
 
-  end({
+  endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,
     method: req.method,
   });
 
+  endbQueryDuration({ query_type: "get_posts" });
   return res.status(status).json({
     posts,
   });
@@ -86,13 +95,15 @@ export const getPosts = async (req: Request, res: Response) => {
 export const getPost = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status, type, message, post } = await getPostService(parseInt(id));
-  const end = httpRequestDurationMicroseconds.startTimer();
+  const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
+  const endbQueryDuration = dbQueryDuration.startTimer();
 
-  end({
+  endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,
     method: req.method,
   });
+  endbQueryDuration({ query_type: "get_post" });
 
   return type === responseTypes.SUCCESS
     ? res.status(status).json({
@@ -105,32 +116,38 @@ export const getPost = async (req: Request, res: Response) => {
 
 export const getUserPosts = async (req: Request, res: Response) => {
   const user = req.user;
-  const end = httpRequestDurationMicroseconds.startTimer();
+  const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
+  const endbQueryDuration = dbQueryDuration.startTimer();
   const { posts, status } = await getUserPostsService(parseInt(user?.id!));
 
-  end({
+  endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,
     method: req.method,
   });
+  endbQueryDuration({ query_type: "get_user_posts" });
+
   return res.status(status).json({
     posts,
   });
 };
 
 export const searchPosts = async (req: Request, res: Response) => {
-  const end = httpRequestDurationMicroseconds.startTimer();
-  const { searchKey } = req.body;
+  const endHttpRequestDuration = httpRequestDurationMicroseconds.startTimer();
+  const endbQueryDuration = dbQueryDuration.startTimer();
 
+  const { searchKey } = req.body;
   const { status, type, message, searchedPosts } = await searchPostService(
     searchKey
   );
 
-  end({
+  endHttpRequestDuration({
     route: req.route.path,
     status_code: res.statusCode,
     method: req.method,
   });
+
+  endbQueryDuration({ query_type: "search_posts" });
 
   return type === responseTypes.SUCCESS
     ? res.status(status).json({
