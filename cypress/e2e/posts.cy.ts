@@ -125,6 +125,20 @@ describe("Post Management Tests", () => {
               expect(commentExists).to.be.true;
             });
           });
+
+          //search the post
+          cy.request({
+            url: "/posts/search",
+            method: "POST",
+            body: {
+              searchKey: "cont",
+            },
+          }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body).to.have.property("searchedPosts");
+            const { searchedPosts } = response.body;
+            expect(searchedPosts.length).to.eq(1);
+          });
         });
       });
     });
