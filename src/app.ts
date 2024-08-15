@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 
+import cors from "cors";
+
 import bodyParser from "body-parser";
 
 import { Signin, Signup } from "./controllers/authController";
@@ -22,6 +24,8 @@ import { authMiddleware } from "./middlewares/authMiddleware";
 import { responseStatuses } from "./constants/responses";
 
 const app = express();
+
+app.use(cors());
 
 app.use(metricsMiddleware);
 
