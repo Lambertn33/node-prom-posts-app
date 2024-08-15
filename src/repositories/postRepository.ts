@@ -119,16 +119,9 @@ export const searchPost = async (searchKey: string): Promise<Post[] | null> => {
       ],
     },
     include: {
-      comments: {
+      _count: {
         select: {
-          content: true,
-          id: true,
-          user: {
-            select: {
-              id: true,
-              email: true,
-            },
-          },
+          comments: true,
         },
       },
       user: {
