@@ -8,9 +8,9 @@ My Project is a web application that allows users to manage posts. It provides f
 
 ### Base URL
 
-The base URL for all API requests is: http://52.122.0.217:5000
+The base URL for all API requests is: http://34.205.32.12:5000
 
-The url for grafana monitoring is: http://52.122.0.217:5000/public-dashboards/684fd7b7cb4f42298330c57174330bf6?orgId=1
+The url for grafana monitoring is: http://34.205.32.12:5000/public-dashboards/684fd7b7cb4f42298330c57174330bf6?orgId=1
 
 the
 
